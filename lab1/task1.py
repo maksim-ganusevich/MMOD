@@ -3,10 +3,13 @@ import re
 from typing import Generator
 import PySimpleGUI as sg
 
+import my_random
+
 
 def get_rand_gen(k: float, n: int = 10 ** 6) -> Generator[bool, None, None]:
+    r = my_random.XorShift128Plus()
     for _ in range(n):
-        yield random.uniform(0, 1) <= k
+        yield r.next_double() <= k
 
 
 def isfloat(s):
