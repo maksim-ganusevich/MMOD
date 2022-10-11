@@ -1,4 +1,3 @@
-import random
 import re
 from typing import Generator
 import PySimpleGUI as sg
