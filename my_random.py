@@ -32,9 +32,7 @@ class XorShift128Plus(object):
 
 
 def main():
-    state1 = int(datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
-    state2 = state1//2
-    prng = XorShift128Plus(state1, state2)
+    prng = XorShift128Plus()
     for _ in itertools.repeat(None, 20):
         print(prng.next_double())
 
