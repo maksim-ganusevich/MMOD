@@ -77,9 +77,38 @@ def checkUniform(s):
     check_window(s, ans)
 
 
+def ToOneStepArr(s):
+    tempArr, i, j = [], 0, 0
+    while i < s[-1] - s[0] + 1:
+        temp = 0
+        while j < len(s) and s[j] < s[0] + (i + 1):
+            temp += 1
+            j += 1
+        tempArr.append(temp / len(s))
+        i += 1
+    return tempArr
+
+
+def checkGeom(s, P):
+    probArr = ToOneStepArr(s)
+    value1, value2, maxDeviat, i = s[0] - 1, s[0], 0, 0
+    while i < s[-1] - s[0] + 1:
+        maxDeviat = max(maxDeviat, abs(probArr[i] - (geomF(value2, P) - geomF(value1, P))))
+        value1 += 1
+        value2 += 1
+        i += 1
+    ans = "Лямбда для равномерного распределения - {}\nВероятность равномерного распределения - {}".format(
+        maxDeviat * (len(s) ** 0.5), Kolmog(maxDeviat * (len(s) ** 0.5)), "\n")
+    check_window(s, ans)
+
+
+def geomF(x, P):
+    return 1 - (1 - P) ** x
+
+
 def check_window(s, ans):
     plt.title('Plot Title')
-    plt.hist(s, bins=25)
+    plt.hist(s, bins=s[-1]-s[0]+1)
     plt.ylabel('Probability')
     plt.xlabel('Data')
     fig = plt.gcf()
@@ -92,6 +121,7 @@ def check_window(s, ans):
                        layout, force_toplevel=True, finalize=True)
     draw_figure(window['-CANVAS-'].TKCanvas, fig)
     window['-OUTPUT-'].update(ans)
+    plt.show()
     while True:
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:

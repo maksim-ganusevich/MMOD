@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from lab2 import task1
+from lab2 import task1, task2
 
 
 sg.theme('BluePurple')
@@ -19,5 +19,8 @@ while True:
 
     if event == 'Task1':
         task1.open_window()
+
+    if event == 'Task2':
+        task2.open_window()
 
 window.close()

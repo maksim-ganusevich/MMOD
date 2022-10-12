@@ -2,7 +2,6 @@ import re
 from typing import Generator
 
 import PySimpleGUI as sg
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import my_random
 from distribution_checkers import checkUniform
@@ -20,13 +19,6 @@ def isfloat(s):
         return True
     else:
         return False
-
-
-def draw_figure(canvas, figure):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    return figure_canvas_agg
 
 
 def open_window():
