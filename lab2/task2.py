@@ -40,7 +40,7 @@ def open_window():
             output = ''
             if checker[0] and len(checker) == 1:
                 p = float(p[0])
-                probabilities = list(get_rand_values(10 ** 6))
+                probabilities = list(get_rand_values(10**6))
                 dots = [math.ceil(math.log(prob)/math.log(1-p)) for prob in probabilities]
                 dots.sort()
                 checkGeom(dots, p)

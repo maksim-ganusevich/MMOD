@@ -1,3 +1,5 @@
+import math
+
 import PySimpleGUI as sg
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -86,20 +88,38 @@ def ToOneStepArr(s):
             j += 1
         tempArr.append(temp / len(s))
         i += 1
+    for i in range(1, len(tempArr)):
+        tempArr[i] = tempArr[i-1] + tempArr[i]
     return tempArr
 
 
 def checkGeom(s, P):
     probArr = ToOneStepArr(s)
-    value1, value2, maxDeviat, i = s[0] - 1, s[0], 0, 0
+    value2, maxDeviat, i = s[0], 0, 0
     while i < s[-1] - s[0] + 1:
-        maxDeviat = max(maxDeviat, abs(probArr[i] - (geomF(value2, P) - geomF(value1, P))))
-        value1 += 1
+        maxDeviat = max(maxDeviat, abs(probArr[i] - geomF(value2, P)))
         value2 += 1
         i += 1
-    ans = "Лямбда для равномерного распределения - {}\nВероятность равномерного распределения - {}".format(
-        maxDeviat * (len(s) ** 0.5), Kolmog(maxDeviat * (len(s) ** 0.5)), "\n")
+    ans = "Лямбда для геометрического распределения - {}\nВероятность геометрического распределения - {}\n".format(
+        maxDeviat * (len(s) ** 0.5), Kolmog(maxDeviat * (len(s) ** 0.5)))
+    ans += "Доверительный интервал для матожидания c вероятностью 0.8 - ( {}, {})\n".format(
+        M(s) - Trust(0.8) * math.sqrt(D(s) / len(s)), M(s) + Trust(0.8) * math.sqrt(D(s) / len(s)))
+    ans += "Доверительный интервал для матожидания c вероятностью 0.8 - ( {}, {})\n".format(
+        D(s) - Trust(0.8) * TrustD(s), D(s) + Trust(0.8) * TrustD(s))
+    ans += "Матожидание = {}, дисперсия = {}".format(M(s), D(s))
     check_window(s, ans)
+
+
+def FCP(s):
+    m = M(s)
+    ans = float(0)
+    for i in s:
+        ans += (i - m) ** 4
+    return ans / len(s)
+
+
+def TrustD(s):
+    return math.sqrt(FCP(s) / len(s) - (len(s) - 3) / len(s) / (len(s) - 1) * (D(s) ** 2))
 
 
 def geomF(x, P):
@@ -109,19 +129,17 @@ def geomF(x, P):
 def check_window(s, ans):
     plt.title('Plot Title')
     plt.hist(s, bins=s[-1]-s[0]+1)
-    plt.ylabel('Probability')
     plt.xlabel('Data')
     fig = plt.gcf()
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
     layout = [[sg.Text('Uniform test', font='Any 18')],
               [sg.Canvas(size=(figure_w, figure_h), key='-CANVAS-')],
-              [sg.Text(size=(70, 2), key='-OUTPUT-')],
+              [sg.Text(size=(120, 5), key='-OUTPUT-')],
               [sg.Button('Exit')]]
     window = sg.Window('Demo Application - Embedding Matplotlib In PySimpleGUI',
                        layout, force_toplevel=True, finalize=True)
     draw_figure(window['-CANVAS-'].TKCanvas, fig)
     window['-OUTPUT-'].update(ans)
-    plt.show()
     while True:
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
